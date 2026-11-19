@@ -25,8 +25,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'nama_lengkap' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'no_telepon' => fake()->numerify('08##########'),
+            'role' => 'peserta',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
@@ -40,6 +42,16 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is a panitia (organizer).
+     */
+    public function panitia(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'panitia',
         ]);
     }
 }
