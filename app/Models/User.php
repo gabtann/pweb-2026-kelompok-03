@@ -86,6 +86,16 @@ class User extends Authenticatable
         return $this->hasMany(LandingPage::class, 'pengubah_id', 'id');
     }
 
+    public function isPanitia(): bool
+    {
+        return $this->role === 'panitia';
+    }
+
+    public function isPeserta(): bool
+    {
+        return $this->role === 'peserta';
+    }
+
     /**
      * Get the attributes that should be cast.
      *
