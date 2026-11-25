@@ -6,29 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Anggota SELAIN ketua. Ketua tersimpan di tabel tim (ketua_id, nim_ketua).
+     */
     public function up(): void
     {
         Schema::create('anggota_tim', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('tim_id');
-            $table->foreignId('event_id')->constrained('event_lomba', 'event_id')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->enum('peran', ['ketua', 'anggota'])->default('anggota');
-            $table->dateTime('joined_at');
-
-            // Virtual (bukan stored): MySQL menolak stored generated column
-            // jika kolom dasarnya (tim_id) punya FK dengan CASCADE.
-            $table->unsignedBigInteger('ketua_tim')->nullable()
-                ->virtualAs("CASE WHEN peran = 'ketua' THEN tim_id ELSE NULL END");
-
+            $table->unsignedBigInteger('event_id');
+            $table->string('nama_lengkap', 100);
+            $table->string('nim', 20);
             $table->timestamps();
 
             // tim_id harus milik event_id yang sama (composite FK).
             $table->foreign(['tim_id', 'event_id'])
                 ->references(['id', 'event_id'])->on('tim')->cascadeOnDelete();
-
-            $table->unique(['event_id', 'user_id']); // 1 user hanya 1 tim per lomba
-            $table->unique('ketua_tim');             // 1 ketua per tim
+            $table->unique(['event_id', 'nim']); // 1 NIM hanya 1 tim per lomba
         });
     }
 

@@ -11,16 +11,24 @@ return new class extends Migration
         Schema::create('event', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pembuat_id')->constrained('users')->restrictOnDelete();
-            $table->enum('jenis_event', ['lomba', 'seminar']);
+            $table->enum('jenis_lomba', ['uiux', 'ict', 'software_development']);
             $table->string('nama_event', 150);
             $table->string('tema', 150);
             $table->text('deskripsi');
             $table->string('gambar_pendukung', 255);
+            $table->string('link_guidebook', 255);
+            $table->text('syarat_ketentuan');
             $table->dateTime('registrasi_mulai');
             $table->dateTime('registrasi_selesai');
-            $table->enum('status_publikasi', ['draft', 'publish'])->default('draft');
+            $table->dateTime('waktu_mulai');
+            $table->dateTime('waktu_selesai');
+            $table->decimal('biaya_pendaftaran', 10, 2)->nullable(); // null = gratis
+            $table->unsignedTinyInteger('min_anggota')->default(2);
+            $table->unsignedTinyInteger('max_anggota')->default(3); // termasuk ketua
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('jenis_lomba');
         });
     }
 

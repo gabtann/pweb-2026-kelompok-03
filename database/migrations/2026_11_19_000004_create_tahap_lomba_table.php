@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('tahap_lomba', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained('event_lomba', 'event_id')->cascadeOnDelete();
+            $table->foreignId('event_id')->constrained('event')->cascadeOnDelete();
             $table->unsignedTinyInteger('nomor_tahap');
             $table->string('nama_tahap', 50);
-            $table->string('jenis_berkas', 50);
+            $table->enum('jenis_berkas', ['pdf', 'pptx']);
             $table->dateTime('batas_mulai');
             $table->dateTime('batas_akhir');
-            $table->unsignedInteger('kuota_lolos')->nullable();
+            $table->unsignedInteger('kuota_lolos')->default(10);
             $table->timestamps();
 
             $table->unique(['event_id', 'nomor_tahap']);
