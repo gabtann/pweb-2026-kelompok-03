@@ -12,12 +12,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tahap_lomba_id')->constrained('tahap_lomba')->cascadeOnDelete();
             $table->foreignId('tim_id')->constrained('tim')->cascadeOnDelete();
-            $table->boolean('lolos')->default(false);
+            $table->decimal('skor', 5, 2)->nullable();
+            $table->enum('status_kelulusan', ['lolos', 'tidak_lolos']);
             $table->unsignedInteger('peringkat')->nullable();
-            $table->string('gelar_juara', 30)->nullable();
             $table->timestamps();
 
             $table->unique(['tahap_lomba_id', 'tim_id']);
+            $table->unique(['tahap_lomba_id', 'peringkat']);
         });
     }
 

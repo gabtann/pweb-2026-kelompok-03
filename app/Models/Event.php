@@ -16,14 +16,12 @@ class Event extends Model
 
     protected $fillable = [
         'pembuat_id',
-        'jenis_event',
         'nama_event',
         'tema',
         'deskripsi',
         'gambar_pendukung',
         'registrasi_mulai',
         'registrasi_selesai',
-        'status_publikasi',
     ];
 
     protected function casts(): array
@@ -37,11 +35,6 @@ class Event extends Model
     public function pembuat(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pembuat_id', 'id');
-    }
-
-    public function eventSeminar(): HasOne
-    {
-        return $this->hasOne(EventSeminar::class, 'event_id', 'id');
     }
 
     public function eventLomba(): HasOne

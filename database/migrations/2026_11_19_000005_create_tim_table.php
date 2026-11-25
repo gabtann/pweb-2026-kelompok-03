@@ -13,7 +13,10 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('event_lomba', 'event_id')->cascadeOnDelete();
             $table->string('nama_tim', 100);
             $table->string('kode_tim', 10)->unique();
-            $table->string('file_dokumen_tim', 255)->nullable();
+            $table->string('asal_perguruan_tinggi', 150);
+            $table->string('nim_ketua', 20);
+            $table->string('file_ktm', 255)->nullable();
+            $table->string('file_pakta', 255)->nullable();
             $table->string('file_bukti_bayar', 255)->nullable();
             $table->enum('status_verifikasi', ['belum', 'menunggu', 'disetujui', 'ditolak'])->default('belum');
             $table->text('catatan_verifikasi')->nullable();

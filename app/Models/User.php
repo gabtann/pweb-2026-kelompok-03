@@ -41,11 +41,6 @@ class User extends Authenticatable
         return $this->hasMany(Tim::class, 'verifikator_id', 'id');
     }
 
-    public function pendaftaranSeminar(): HasMany
-    {
-        return $this->hasMany(PendaftaranSeminar::class, 'user_id', 'id');
-    }
-
     public function feedback(): HasMany
     {
         return $this->hasMany(Feedback::class, 'user_id', 'id');
@@ -79,11 +74,6 @@ class User extends Authenticatable
     public function notifikasi(): HasMany
     {
         return $this->hasMany(Notifikasi::class, 'user_id', 'id');
-    }
-
-    public function landingPageDiubah(): HasMany
-    {
-        return $this->hasMany(LandingPage::class, 'pengubah_id', 'id');
     }
 
     /**

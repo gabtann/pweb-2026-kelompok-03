@@ -13,7 +13,6 @@ class Sertifikat extends Model
         'event_id',
         'user_id',
         'tim_id',
-        'jenis_sertifikat',
         'link_gdrive',
         'pengunggah_id',
         'diunggah_at',

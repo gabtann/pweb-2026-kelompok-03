@@ -12,17 +12,27 @@ class HasilTahap extends Model
     protected $fillable = [
         'tahap_lomba_id',
         'tim_id',
-        'lolos',
+        'skor',
+        'status_kelulusan',
         'peringkat',
-        'gelar_juara',
     ];
 
     protected function casts(): array
     {
         return [
-            'lolos' => 'boolean',
+            'skor' => 'decimal:2',
             'peringkat' => 'integer',
         ];
+    }
+
+    public function isLolos(): bool
+    {
+        return $this->status_kelulusan === 'lolos';
+    }
+
+    public function isJuara(): bool
+    {
+        return $this->peringkat !== null && $this->peringkat <= 3;
     }
 
     public function tahapLomba(): BelongsTo

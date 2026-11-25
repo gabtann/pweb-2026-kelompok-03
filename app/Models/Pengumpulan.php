@@ -16,7 +16,6 @@ class Pengumpulan extends Model
         'file_submission',
         'submitted_at',
         'status_validasi',
-        'skor',
         'catatan_penilaian',
         'penilai_id',
         'dinilai_at',
@@ -27,7 +26,6 @@ class Pengumpulan extends Model
         return [
             'submitted_at' => 'datetime',
             'dinilai_at' => 'datetime',
-            'skor' => 'decimal:2',
         ];
     }
 
