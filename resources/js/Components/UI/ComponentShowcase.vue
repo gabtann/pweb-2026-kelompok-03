@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import AdminLayout from '../../Layouts/AdminLayout.vue';
+import PublicLayout from '../../Layouts/PublicLayout.vue';
 import {
   Button,
   Input,
@@ -15,8 +17,10 @@ import {
   Alert,
 } from './index.js';
 
-// Interactive states
-const isLoadingBtn = ref(false);
+// Active View Tab: 'components' | 'admin-layout' | 'public-layout'
+const activeTab = ref('components');
+const adminRoute = ref('dashboard');
+const publicRoute = ref('competitions');
 const showDeleteModal = ref(false);
 const showVerifyModal = ref(false);
 const isTableLoading = ref(false);
@@ -118,6 +122,46 @@ const toggleButtonLoading = () => {
           </div>
         </div>
 
+        <!-- Tab Switcher Navigation -->
+        <div class="flex items-center gap-1.5 p-1 bg-purple-50 rounded-xl border border-purple-100/80">
+          <button
+            type="button"
+            :class="[
+              'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer',
+              activeTab === 'components'
+                ? 'bg-white text-[#5E17EB] shadow-2xs font-bold'
+                : 'text-slate-600 hover:text-[#5E17EB]',
+            ]"
+            @click="activeTab = 'components'"
+          >
+            1. UI Components
+          </button>
+          <button
+            type="button"
+            :class="[
+              'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer',
+              activeTab === 'admin-layout'
+                ? 'bg-white text-[#5E17EB] shadow-2xs font-bold'
+                : 'text-slate-600 hover:text-[#5E17EB]',
+            ]"
+            @click="activeTab = 'admin-layout'"
+          >
+            2. AdminLayout Preview
+          </button>
+          <button
+            type="button"
+            :class="[
+              'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer',
+              activeTab === 'public-layout'
+                ? 'bg-white text-[#5E17EB] shadow-2xs font-bold'
+                : 'text-slate-600 hover:text-[#5E17EB]',
+            ]"
+            @click="activeTab = 'public-layout'"
+          >
+            2. PublicLayout Preview
+          </button>
+        </div>
+
         <!-- User Identity Preview (Iterate 2026 style) -->
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block">
@@ -129,8 +173,8 @@ const toggleButtonLoading = () => {
       </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-10">
+    <!-- Main Container for Components Showcase -->
+    <main v-if="activeTab === 'components'" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-10">
       <!-- Welcome Banner (Matching Figma Screenshot 1) -->
       <div class="rounded-2xl p-6 sm:p-8 bg-gradient-to-r from-[#4A159D] via-[#6B17B6] to-[#8E179E] text-white shadow-lg shadow-purple-900/15 relative overflow-hidden">
         <div class="relative z-10 max-w-xl space-y-2">
@@ -664,6 +708,193 @@ const toggleButtonLoading = () => {
         </div>
       </section>
     </main>
+
+    <!-- TAB 2: AdminLayout Live Preview (Jobdesk 2) -->
+    <div v-else-if="activeTab === 'admin-layout'" class="min-h-screen">
+      <AdminLayout
+        :title="adminRoute === 'dashboard' ? 'Dashboard Administrasi' : adminRoute === 'accounts' ? 'Kelola Akun Pengguna' : adminRoute === 'events' ? 'Kelola Event & Kategori' : adminRoute === 'teams' ? 'Kelola Tim & Verifikasi Berkas' : 'Pengumuman'"
+        :subtitle="'Pratinjau Interaktif AdminLayout (Jobdesk 2) — Modul Aktif: ' + adminRoute"
+        :current-route="adminRoute"
+        @navigate="adminRoute = $event.id"
+      >
+        <!-- Notice Banner -->
+        <Alert type="info" title="Preview Mode: AdminLayout (Jobdesk 2)">
+          Sidebar kiri responsif dengan warna ungu khas Iterate 2026, navbar atas, identitas admin, dan layout ini siap digunakan oleh Jobdesk 4 (Akun), Jobdesk 5 (Event), dan Jobdesk 6 (Tim). Klik menu di sidebar untuk menguji navigasi aktif!
+        </Alert>
+
+        <!-- Stats Grid (Simulasi Konten Dashboard) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <Card no-padding>
+            <div class="p-5 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Akun</p>
+                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">128</h3>
+                <span class="text-[11px] text-emerald-600 font-semibold mt-1 inline-block">↑ 12 minggu ini</span>
+              </div>
+              <div class="p-3 bg-purple-50 text-[#5E17EB] rounded-2xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+              </div>
+            </div>
+          </Card>
+
+          <Card no-padding>
+            <div class="p-5 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Event</p>
+                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">4</h3>
+                <span class="text-[11px] text-purple-600 font-semibold mt-1 inline-block">3 Lomba, 1 Seminar</span>
+              </div>
+              <div class="p-3 bg-purple-50 text-[#5E17EB] rounded-2xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
+            </div>
+          </Card>
+
+          <Card no-padding>
+            <div class="p-5 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tim Terdaftar</p>
+                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">48</h3>
+                <span class="text-[11px] text-amber-600 font-semibold mt-1 inline-block">16 Butuh Verifikasi</span>
+              </div>
+              <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+              </div>
+            </div>
+          </Card>
+
+          <Card no-padding>
+            <div class="p-5 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Berkas Terverifikasi</p>
+                <h3 class="text-2xl font-extrabold text-slate-800 mt-1">32</h3>
+                <span class="text-[11px] text-emerald-600 font-semibold mt-1 inline-block">67% Dari total pendaftar</span>
+              </div>
+              <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <!-- Section: Tim Terbaru (Menggunakan Table.vue) -->
+        <Card title="Daftar Tim Terbaru untuk Verifikasi Berkas" tag="DATA TERKINI">
+          <template #actions>
+            <Button size="sm" variant="outline">Lihat Semua Tim</Button>
+          </template>
+          <Table
+            :columns="tableColumns"
+            :rows="mockTeams"
+            empty-text="Belum ada data tim."
+          >
+            <template #cell(name)="{ row }">
+              <div class="flex items-center gap-2.5">
+                <Avatar :name="row.name" size="sm" />
+                <div>
+                  <p class="font-bold text-slate-900 leading-tight">{{ row.name }}</p>
+                  <p class="text-xs text-slate-400">{{ row.email }}</p>
+                </div>
+              </div>
+            </template>
+            <template #cell(status)="{ value }">
+              <Badge v-if="value === 'terverifikasi'" variant="success" dot>Terverifikasi</Badge>
+              <Badge v-else-if="value === 'menunggu'" variant="warning" dot>Menunggu</Badge>
+              <Badge v-else-if="value === 'ditolak'" variant="danger" dot>Ditolak</Badge>
+              <Badge v-else variant="gray">{{ value }}</Badge>
+            </template>
+            <template #actions>
+              <Button size="sm" variant="outline">Periksa Berkas</Button>
+            </template>
+          </Table>
+        </Card>
+      </AdminLayout>
+    </div>
+
+    <!-- TAB 3: PublicLayout (Portal Peserta) Live Preview (Jobdesk 2) -->
+    <div v-else-if="activeTab === 'public-layout'" class="min-h-screen">
+      <PublicLayout
+        :current-route="publicRoute"
+        @navigate="publicRoute = $event.id"
+      >
+        <!-- Notice Banner -->
+        <Alert type="info" title="Preview Mode: PublicLayout (Portal Peserta)" class="mb-6">
+          Layout ini 100% mengadopsi desain Figma Iterate 2026: Sidebar ungu peserta di kiri (Profile, Event: All Competitions & My Events, Announcement), header identitas James (Peserta), dan area konten kompetisi.
+        </Alert>
+
+        <!-- All Competitions View (Matches Figma Screenshot 1) -->
+        <div class="space-y-6">
+          <h2 class="text-xl font-bold text-slate-800 tracking-tight">
+            All Competitions
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 max-w-5xl">
+            <!-- Card 1: UI/UX (Figma Design) -->
+            <Card no-padding>
+              <div class="h-48 bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-700 overflow-hidden relative">
+                <img
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80"
+                  alt="UI/UX"
+                  class="w-full h-full object-cover opacity-80"
+                />
+              </div>
+              <div class="p-6 space-y-3">
+                <h3 class="text-xl font-bold text-slate-900">UI/UX</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                  Menghadirkan pakar riset kelautan komputasional dan arsitek AI terkemuka....
+                </p>
+                <div class="space-y-2.5 pt-2">
+                  <Button variant="outline" block size="md">See Details</Button>
+                  <Button variant="primary" block size="md">Register Now</Button>
+                </div>
+              </div>
+            </Card>
+
+            <!-- Card 2: ICT Business Development (Figma Design) -->
+            <Card no-padding>
+              <div class="h-48 bg-gradient-to-tr from-purple-800 via-purple-600 to-pink-600 overflow-hidden relative">
+                <img
+                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80"
+                  alt="ICT"
+                  class="w-full h-full object-cover opacity-80"
+                />
+              </div>
+              <div class="p-6 space-y-3">
+                <h3 class="text-xl font-bold text-slate-900">ICT Business Development</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                  Menghadirkan pakar riset kelautan komputasional dan arsitek AI terkemuka....
+                </p>
+                <div class="space-y-2.5 pt-2">
+                  <Button variant="outline" block size="md">See Details</Button>
+                  <Button variant="primary" block size="md">Register Now</Button>
+                </div>
+              </div>
+            </Card>
+
+            <!-- Card 3: Software Development (Figma Design) -->
+            <Card no-padding>
+              <div class="h-48 bg-gradient-to-tr from-indigo-900 via-purple-900 to-slate-900 overflow-hidden relative">
+                <img
+                  src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80"
+                  alt="Software"
+                  class="w-full h-full object-cover opacity-80"
+                />
+              </div>
+              <div class="p-6 space-y-3">
+                <h3 class="text-xl font-bold text-slate-900">Software Development</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                  Menghadirkan pakar riset kelautan komputasional dan arsitek AI terkemuka....
+                </p>
+                <div class="space-y-2.5 pt-2">
+                  <Button variant="outline" block size="md">See Details</Button>
+                  <Button variant="primary" block size="md">Register Now</Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </PublicLayout>
+    </div>
+
   </div>
 </template>
 
