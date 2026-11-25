@@ -17,6 +17,7 @@ class EventFactory extends Factory
 
         return [
             'pembuat_id' => User::factory()->panitia(),
+            'jenis_lomba' => $faker->randomElement(array_keys(Event::JENIS_LOMBA)),
             'nama_event' => 'Lomba '.$faker->words(3, true),
             'tema' => $faker->sentence(4),
             'deskripsi' => $faker->paragraph(),
@@ -31,6 +32,21 @@ class EventFactory extends Factory
             'min_anggota' => 2,
             'max_anggota' => 3,
         ];
+    }
+
+    public function uiux(): static
+    {
+        return $this->state(fn (array $attributes) => ['jenis_lomba' => 'uiux']);
+    }
+
+    public function ict(): static
+    {
+        return $this->state(fn (array $attributes) => ['jenis_lomba' => 'ict']);
+    }
+
+    public function softwareDevelopment(): static
+    {
+        return $this->state(fn (array $attributes) => ['jenis_lomba' => 'software_development']);
     }
 
     public function berbayar(float $biaya = 50000): static

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('event', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pembuat_id')->constrained('users')->restrictOnDelete();
+            $table->enum('jenis_lomba', ['uiux', 'ict', 'software_development']);
             $table->string('nama_event', 150);
             $table->string('tema', 150);
             $table->text('deskripsi');
@@ -26,6 +27,8 @@ return new class extends Migration
             $table->unsignedTinyInteger('max_anggota')->default(3); // termasuk ketua
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('jenis_lomba');
         });
     }
 

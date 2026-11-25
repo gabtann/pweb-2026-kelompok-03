@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,10 +16,18 @@ class Event extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /** Urutan array ini = urutan tampil. */
+    public const JENIS_LOMBA = [
+        'uiux' => 'UI/UX',
+        'ict' => 'ICT',
+        'software_development' => 'Software Development',
+    ];
+
     protected $table = 'event';
 
     protected $fillable = [
         'pembuat_id',
+        'jenis_lomba',
         'nama_event',
         'tema',
         'deskripsi',
@@ -44,6 +54,51 @@ class Event extends Model
             'min_anggota' => 'integer',
             'max_anggota' => 'integer',
         ];
+    }
+
+    protected function labelJenisLomba(): Attribute
+    {
+        return Attribute::get(fn () => self::JENIS_LOMBA[$this->jenis_lomba] ?? null);
+    }
+
+    public function scopeJenis(Builder $query, ?string $jenis): Builder
+    {
+        return $query->when($jenis !== null, fn (Builder $q) => $q->where($q->getModel()->getTable().'.jenis_lomba', $jenis));
+    }
+
+    /** Urut sesuai urutan JENIS_LOMBA, lalu nama_event. Pakai CASE WHEN (portabel MySQL dan sqlite). */
+    public function scopeUrutJenis(Builder $query): Builder
+    {
+        $kunci = array_keys(self::JENIS_LOMBA);
+        $kolom = $query->getModel()->getTable().'.jenis_lomba';
+
+        $case = 'CASE '.$kolom.str_repeat(' WHEN ? THEN ?', count($kunci)).' ELSE '.count($kunci).' END';
+        $bindings = [];
+        foreach ($kunci as $i => $k) {
+            $bindings[] = $k;
+            $bindings[] = $i;
+        }
+
+        return $query->orderByRaw($case, $bindings)->orderBy($query->getModel()->getTable().'.nama_event');
+    }
+
+    /**
+     * Juara per jenis lomba, dari event paling baru (waktu_mulai terbaru) tiap jenis.
+     * Semua jenis selalu ada sebagai kunci; Collection kosong = belum ada pengumuman.
+     *
+     * @return array<string, Collection<int, Pengumpulan>>
+     */
+    public static function juaraPerJenis(): array
+    {
+        $hasil = [];
+
+        foreach (array_keys(self::JENIS_LOMBA) as $jenis) {
+            $event = static::jenis($jenis)->orderByDesc('waktu_mulai')->first();
+
+            $hasil[$jenis] = $event ? $event->juara() : new Collection;
+        }
+
+        return $hasil;
     }
 
     public function pembuat(): BelongsTo

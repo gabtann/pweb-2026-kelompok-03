@@ -130,6 +130,11 @@ class Tim extends Model
         return $sebelumnya !== null && $this->lolosTahap($sebelumnya);
     }
 
+    public function scopeFilterJenis(Builder $query, ?string $jenis): Builder
+    {
+        return $query->when($jenis !== null, fn (Builder $q) => $q->whereHas('event', fn (Builder $e) => $e->where('jenis_lomba', $jenis)));
+    }
+
     public function scopeFilterEvent(Builder $query, ?int $eventId): Builder
     {
         return $query->when($eventId, fn (Builder $q) => $q->where('event_id', $eventId));
