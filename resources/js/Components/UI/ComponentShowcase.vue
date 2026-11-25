@@ -2,6 +2,13 @@
 import { ref } from 'vue';
 import AdminLayout from '../../Layouts/AdminLayout.vue';
 import PublicLayout from '../../Layouts/PublicLayout.vue';
+import LandingLayout from '../../Layouts/LandingLayout.vue';
+import HeroSection from '../Landing/HeroSection.vue';
+import AboutSection from '../Landing/AboutSection.vue';
+import CompetitionCarousel from '../Landing/CompetitionCarousel.vue';
+import TimelineSection from '../Landing/TimelineSection.vue';
+import FaqSection from '../Landing/FaqSection.vue';
+import PrizeSection from '../Landing/PrizeSection.vue';
 import {
   Button,
   Input,
@@ -159,6 +166,18 @@ const toggleButtonLoading = () => {
             @click="activeTab = 'public-layout'"
           >
             2. PublicLayout Preview
+          </button>
+          <button
+            type="button"
+            :class="[
+              'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer',
+              activeTab === 'landing-page'
+                ? 'bg-white text-[#5E17EB] shadow-2xs font-bold'
+                : 'text-slate-600 hover:text-[#5E17EB]',
+            ]"
+            @click="activeTab = 'landing-page'"
+          >
+            3. Landing Page Preview
           </button>
         </div>
 
@@ -893,6 +912,30 @@ const toggleButtonLoading = () => {
           </div>
         </div>
       </PublicLayout>
+    </div>
+
+    <!-- TAB 4: JOBDESK 3 LANDING PAGE PREVIEW -->
+    <div v-else-if="activeTab === 'landing-page'" class="-mt-4 -mb-20">
+      <!-- Helper Banner to Open Standalone Route -->
+      <div class="bg-gradient-to-r from-purple-950 via-[#18042F] to-purple-950 text-white px-4 py-2.5 text-center text-xs flex flex-wrap items-center justify-center gap-2 border-b border-purple-500/30">
+        <span class="text-purple-200">Untuk pengalaman animasi navbar paling mulus (full screen native):</span>
+        <a
+          href="/landing"
+          target="_blank"
+          class="font-bold underline text-pink-300 hover:text-white inline-flex items-center gap-1 bg-white/10 px-2.5 py-0.5 rounded-full hover:bg-white/20 transition-all"
+        >
+          Buka /landing (Halaman Penuh) ↗
+        </a>
+      </div>
+
+      <LandingLayout>
+        <HeroSection />
+        <AboutSection />
+        <CompetitionCarousel />
+        <TimelineSection />
+        <FaqSection />
+        <PrizeSection />
+      </LandingLayout>
     </div>
 
   </div>

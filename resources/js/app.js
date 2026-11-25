@@ -20,7 +20,17 @@ if (appEl) {
             },
         });
     } else {
-        // Standalone preview for Jobdesk 1 Reusable Components Showcase
-        createApp(ComponentShowcase).mount(appEl);
+        // Direct route preview check
+        const urlParams = new URLSearchParams(window.location.search);
+        const path = window.location.pathname;
+
+        if (urlParams.get('view') === 'landing' || path === '/landing') {
+            import('./Pages/LandingPage.vue').then((module) => {
+                createApp(module.default).mount(appEl);
+            });
+        } else {
+            // Standalone preview for Jobdesk 1 Reusable Components Showcase
+            createApp(ComponentShowcase).mount(appEl);
+        }
     }
 }
