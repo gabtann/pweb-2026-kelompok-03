@@ -7,11 +7,11 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+// 'role' sengaja TIDAK di fillable (cegah privilege escalation lewat mass assignment).
 #[Fillable(['nama_lengkap', 'email', 'no_telepon', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -19,46 +19,29 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public function isPanitia(): bool
+    {
+        return $this->role === 'panitia';
+    }
+
+    public function isPeserta(): bool
+    {
+        return $this->role === 'peserta';
+    }
+
     public function eventDibuat(): HasMany
     {
         return $this->hasMany(Event::class, 'pembuat_id', 'id');
     }
 
-    public function anggotaTim(): HasMany
+    public function timDiketuai(): HasMany
     {
-        return $this->hasMany(AnggotaTim::class, 'user_id', 'id');
-    }
-
-    public function tim(): BelongsToMany
-    {
-        return $this->belongsToMany(Tim::class, 'anggota_tim', 'user_id', 'tim_id')
-            ->withPivot('event_id', 'peran', 'joined_at')
-            ->withTimestamps();
+        return $this->hasMany(Tim::class, 'ketua_id', 'id');
     }
 
     public function timDiverifikasi(): HasMany
     {
         return $this->hasMany(Tim::class, 'verifikator_id', 'id');
-    }
-
-    public function feedback(): HasMany
-    {
-        return $this->hasMany(Feedback::class, 'user_id', 'id');
-    }
-
-    public function sertifikat(): HasMany
-    {
-        return $this->hasMany(Sertifikat::class, 'user_id', 'id');
-    }
-
-    public function sertifikatDiunggah(): HasMany
-    {
-        return $this->hasMany(Sertifikat::class, 'pengunggah_id', 'id');
-    }
-
-    public function pengumpulan(): HasMany
-    {
-        return $this->hasMany(Pengumpulan::class, 'pengumpul_id', 'id');
     }
 
     public function pengumpulanDinilai(): HasMany
@@ -69,11 +52,6 @@ class User extends Authenticatable
     public function pengumumanDibuat(): HasMany
     {
         return $this->hasMany(Pengumuman::class, 'pembuat_id', 'id');
-    }
-
-    public function notifikasi(): HasMany
-    {
-        return $this->hasMany(Notifikasi::class, 'user_id', 'id');
     }
 
     /**

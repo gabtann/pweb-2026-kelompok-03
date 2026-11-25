@@ -10,14 +10,11 @@ return new class extends Migration
     {
         Schema::create('pengumuman', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained('event')->cascadeOnDelete();
-            $table->foreignId('tahap_lomba_id')->nullable()->constrained('tahap_lomba')->nullOnDelete();
+            $table->foreignId('tahap_lomba_id')->unique()->constrained('tahap_lomba')->cascadeOnDelete();
             $table->foreignId('pembuat_id')->constrained('users')->restrictOnDelete();
-            $table->enum('jenis', ['tahap', 'juara', 'umum']);
-            $table->string('judul', 150);
-            $table->text('isi');
-            $table->string('file_penilaian', 255)->nullable();
-            $table->dateTime('dipublikasikan_at');
+            $table->string('link_penilaian', 255)->nullable();
+            $table->string('link_sertifikat', 255)->nullable();
+            $table->dateTime('dipublikasikan_at')->nullable(); // null = belum diumumkan
             $table->timestamps();
         });
     }

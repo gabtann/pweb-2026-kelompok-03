@@ -24,10 +24,12 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = fake('id_ID');
+
         return [
-            'nama_lengkap' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'no_telepon' => fake()->numerify('08##########'),
+            'nama_lengkap' => $faker->name(),
+            'email' => $faker->unique()->safeEmail(),
+            'no_telepon' => $faker->numerify('08##########'),
             'role' => 'peserta',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -46,7 +48,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the user is a panitia (organizer).
+     * Indicate that the user is a panitia (admin).
      */
     public function panitia(): static
     {

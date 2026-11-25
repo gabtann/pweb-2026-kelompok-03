@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class TahapLomba extends Model
 {
+    use HasFactory;
+
     protected $table = 'tahap_lomba';
 
     protected $fillable = [
@@ -30,9 +34,9 @@ class TahapLomba extends Model
         ];
     }
 
-    public function eventLomba(): BelongsTo
+    public function event(): BelongsTo
     {
-        return $this->belongsTo(EventLomba::class, 'event_id', 'event_id');
+        return $this->belongsTo(Event::class, 'event_id', 'id');
     }
 
     public function pengumpulan(): HasMany
@@ -40,13 +44,23 @@ class TahapLomba extends Model
         return $this->hasMany(Pengumpulan::class, 'tahap_lomba_id', 'id');
     }
 
-    public function hasilTahap(): HasMany
+    public function pengumuman(): HasOne
     {
-        return $this->hasMany(HasilTahap::class, 'tahap_lomba_id', 'id');
+        return $this->hasOne(Pengumuman::class, 'tahap_lomba_id', 'id');
     }
 
-    public function pengumuman(): HasMany
+    /** Tahap dengan nomor tepat sebelumnya di event yang sama; null jika ini tahap pertama. */
+    public function tahapSebelumnya(): ?TahapLomba
     {
-        return $this->hasMany(Pengumuman::class, 'tahap_lomba_id', 'id');
+        return static::where('event_id', $this->event_id)
+            ->where('nomor_tahap', $this->nomor_tahap - 1)
+            ->first();
+    }
+
+    public function isTahapTerakhir(): bool
+    {
+        return ! static::where('event_id', $this->event_id)
+            ->where('nomor_tahap', '>', $this->nomor_tahap)
+            ->exists();
     }
 }
