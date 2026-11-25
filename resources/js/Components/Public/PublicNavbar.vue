@@ -1,0 +1,100 @@
+<script setup>
+import { ref } from 'vue';
+import Avatar from '../UI/Avatar.vue';
+
+const props = defineProps({
+  user: {
+    type: Object,
+    default: () => ({
+      name: 'James',
+      role: 'Peserta',
+    }),
+  },
+});
+
+defineEmits(['toggle-sidebar', 'logout']);
+
+const isDropdownOpen = ref(false);
+</script>
+
+<template>
+  <header class="h-16 bg-white border-b border-purple-100/60 sticky top-0 z-30 shadow-2xs backdrop-blur-md bg-white/95">
+    <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+      <!-- Left: Mobile Toggle Button -->
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-[#5E17EB] hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-colors"
+          aria-label="Buka menu peserta"
+          @click="$emit('toggle-sidebar')"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Right: User Identity Profile (Matches Figma: "James", "Peserta", Avatar circle) -->
+      <div class="relative ml-auto">
+        <button
+          type="button"
+          class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-purple-50/60 focus:outline-none transition-colors group cursor-pointer"
+          @click="isDropdownOpen = !isDropdownOpen"
+        >
+          <div class="text-right">
+            <p class="text-sm font-bold text-slate-800 leading-tight group-hover:text-[#5E17EB] transition-colors">
+              {{ user.name }}
+            </p>
+            <p class="text-xs text-slate-400 font-medium">
+              {{ user.role }}
+            </p>
+          </div>
+
+          <!-- Circular Purple Avatar -->
+          <Avatar :name="user.name" size="md" status="online" />
+
+          <svg class="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <Transition
+          enter-active-class="transition duration-150 ease-out"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition duration-100 ease-in"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
+        >
+          <div
+            v-if="isDropdownOpen"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-lg border border-slate-100 py-1.5 z-50 text-xs"
+            @mouseleave="isDropdownOpen = false"
+          >
+            <div class="px-4 py-2 border-b border-slate-100">
+              <p class="font-bold text-slate-800">{{ user.name }}</p>
+              <p class="text-slate-400">{{ user.role }}</p>
+            </div>
+
+            <a
+              href="/profile"
+              class="block px-4 py-2 text-slate-700 hover:bg-purple-50 hover:text-[#5E17EB] transition-colors"
+              @click="isDropdownOpen = false"
+            >
+              Pengaturan Profil
+            </a>
+
+            <button
+              type="button"
+              class="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50 transition-colors"
+              @click="$emit('logout'); isDropdownOpen = false"
+            >
+              Keluar (Logout)
+            </button>
+          </div>
+        </Transition>
+      </div>
+    </div>
+  </header>
+</template>
