@@ -2,24 +2,32 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * Seeder demo/dev. Hanya jalan di local dan testing.
+ *
+ * Sengaja TIDAK memakai WithoutModelEvents: Tim::booted() membuat kode_tim
+ * lewat event "creating", dan akan terlewat jika event model dimatikan.
+ * Tidak idempotent: pakai bersama `migrate:fresh`.
+ */
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (! app()->environment(['local', 'testing'])) {
+            return;
+        }
 
-        User::factory()->create([
-            'nama_lengkap' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        DB::transaction(function () {
+            $this->call([
+                PenggunaSeeder::class,
+                LombaSeeder::class,
+                TimSeeder::class,
+                PengumpulanSeeder::class,
+                PengumumanSeeder::class,
+            ]);
+        });
     }
 }
