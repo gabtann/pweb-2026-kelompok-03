@@ -60,6 +60,25 @@ it('menghitung peringkat dan status lolos otomatis saat publish', function () {
     expect($pengumuman->fresh()->dipublikasikan_at)->not->toBeNull();
 });
 
+it('peringkatLolos kosong sebelum publish dan berisi 10 tim urut peringkat setelah publish', function () {
+    [$tahap, $pengumuman] = siapkanTahapPublikasi();
+
+    collect(range(1, 12))->map(fn ($i) => 50 + $i * 3)->shuffle()
+        ->each(fn ($s) => buatPengumpulan($tahap, $s));
+
+    expect($tahap->peringkatLolos())->toBeEmpty();
+
+    app(PengumumanService::class)->publikasikan($pengumuman, User::factory()->panitia()->create());
+
+    $lolos = $tahap->peringkatLolos();
+
+    expect($lolos)->toHaveCount(10);
+    expect($lolos->pluck('peringkat')->all())->toBe(range(1, 10));
+    expect($lolos->every(fn ($p) => $p->isLolos()))->toBeTrue();
+    expect($lolos->every(fn ($p) => $p->relationLoaded('tim') && $p->tim->nama_tim !== null))->toBeTrue();
+    expect($lolos->first()->tim->asal_perguruan_tinggi)->not->toBeNull();
+});
+
 it('memenangkan submitted_at paling awal saat skor seri', function () {
     [$tahap, $pengumuman] = siapkanTahapPublikasi();
 

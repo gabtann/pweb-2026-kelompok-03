@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,6 +48,26 @@ class TahapLomba extends Model
     public function pengumuman(): HasOne
     {
         return $this->hasOne(Pengumuman::class, 'tahap_lomba_id', 'id');
+    }
+
+    /**
+     * Pengumpulan yang lolos di tahap ini, urut peringkat ASC.
+     * Kosong jika pengumuman tahap ini belum dipublikasikan.
+     *
+     * @return Collection<int, Pengumpulan>
+     */
+    public function peringkatLolos(): Collection
+    {
+        // Query langsung (bukan relasi ter-cache) supaya tidak basi setelah publish.
+        if (! $this->pengumuman()->whereNotNull('dipublikasikan_at')->exists()) {
+            return new Collection;
+        }
+
+        return $this->pengumpulan()
+            ->where('status_kelulusan', 'lolos')
+            ->with('tim:id,nama_tim,asal_perguruan_tinggi')
+            ->orderBy('peringkat')
+            ->get();
     }
 
     /** Tahap dengan nomor tepat sebelumnya di event yang sama; null jika ini tahap pertama. */
