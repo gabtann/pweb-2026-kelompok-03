@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Panitia\AkunController;
 use App\Http\Controllers\Panitia\EventController;
 use App\Http\Controllers\Panitia\TahapLombaController;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,7 @@ Route::prefix('panitia')->name('panitia.')->middleware(['auth', 'role:panitia'])
     Route::view('/dashboard', 'panitia.dashboard')->name('dashboard');
 
     Route::resource('event', EventController::class);
+    Route::resource('akun', AkunController::class)->except(['show']);
     Route::resource('event.tahap', TahapLombaController::class)->except(['index', 'show'])->scoped();
 });
 
