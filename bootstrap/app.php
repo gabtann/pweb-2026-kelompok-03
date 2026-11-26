@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
         ]);
 
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
+
         // TODO: ganti ke route('login') setelah fitur auth (branch teman) di-merge.
         $middleware->redirectGuestsTo('/');
     })

@@ -56,6 +56,15 @@ class Event extends Model
         ];
     }
 
+    /**
+     * Route model binding ber-scope ({event}/tahap/{tahap}) menebak nama relasi "tahaps";
+     * relasi kita bernama tahapLomba().
+     */
+    protected function childRouteBindingRelationshipName($childType)
+    {
+        return $childType === 'tahap' ? 'tahapLomba' : parent::childRouteBindingRelationshipName($childType);
+    }
+
     protected function labelJenisLomba(): Attribute
     {
         return Attribute::get(fn () => self::JENIS_LOMBA[$this->jenis_lomba] ?? null);
