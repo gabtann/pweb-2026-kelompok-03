@@ -6,6 +6,8 @@ use App\Http\Controllers\Panitia\TahapLombaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Panitia\PengumumanController;
+use App\Http\Controllers\Peserta\PengumumanController as PesertaPengumumanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,9 +38,15 @@ Route::prefix('panitia')->name('panitia.')->middleware(['auth', 'role:panitia'])
 
     Route::resource('event', EventController::class);
     Route::resource('akun', AkunController::class)->except(['show']);
+    Route::post('pengumuman/{pengumuman}/publikasi', [PengumumanController::class, 'publikasi'])->name('pengumuman.publikasi');
+    Route::resource('pengumuman', PengumumanController::class)->except(['show']);
     Route::resource('event.tahap', TahapLombaController::class)->except(['index', 'show'])->scoped();
 });
 
 Route::prefix('peserta')->name('peserta.')->middleware(['auth', 'role:peserta'])->group(function () {
     Route::view('/dashboard', 'peserta.dashboard')->name('dashboard');
+});
+
+Route::prefix('peserta')->name('peserta.')->middleware(['auth', 'role:peserta'])->group(function () {
+    Route::get('/pengumuman', [PesertaPengumumanController::class, 'index'])->name('pengumuman.index');
 });
